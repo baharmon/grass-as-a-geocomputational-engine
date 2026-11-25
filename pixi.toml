@@ -1,0 +1,21 @@
+[workspace]
+authors = ["Brendan Harmon <brendan.harmon@gmail.com>"]
+channels = ["conda-forge"]
+name = "grass-engine"
+platforms = ["win-64", "linux-64", "osx-64", "osx-arm64"]
+version = "0.1.0"
+
+[tasks]
+
+[dependencies]
+python = "*"
+grass = "*"
+jupyterlab = "*"
+matplotlib = "*"
+folium = "*"
+pandas = "*"
+pyvista = "*"
+laspy = "*"
+lazrs-python = "*"
+omnicloudmask = "*"
+eodag = "*"

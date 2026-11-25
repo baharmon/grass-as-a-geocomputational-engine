@@ -1,0 +1,16 @@
+# environment.yml
+name: grass-engine
+channels:
+  - conda-forge
+dependencies:
+  - python
+  - grass
+  - jupyterlab
+  - matplotlib
+  - folium
+  - pandas
+  - pyvista
+  - laspy
+  - lazrs-python
+  - omnicloudmask
+  - eodag

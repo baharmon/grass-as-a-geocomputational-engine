@@ -1,0 +1,34 @@
+relief   rt        |r| 1.0000; no value on 0.00% of the reference's interior cells
+slope    rt        mean |d| 3.332e-07, max 1.129e-05; aspect mean |d| 5.33e-06 (|d| > 90: 0.0%); no value on 0.00% of the reference's interior cells
+focal    rt        mean |d| 0, max 0; no value on 0.00% of the reference's interior cells
+algebra  rt        mean |d| 0, max 0; no value on 0.00% of the reference's interior cells
+resample rt        mean |d| 0.0001361, max 9.86; no value on 0.00% of the reference's interior cells
+cost     rt        |r| 1.0000, median 10.0000 of ref; no value on 0.00% of the reference's interior cells
+slope    xdem      mean |d| 6.312e-07, max 1.526e-05; aspect mean |d| 1.04e-05 (|d| > 90: 0.0%); no value on 0.00% of the reference's interior cells
+algebra  xdem      mean |d| 3.072e-06, max 7.629e-06; no value on 0.00% of the reference's interior cells
+resample xdem      mean |d| 0, max 0; no value on 0.00% of the reference's interior cells
+relief   xdemmp    |r| 0.9999; no value on 0.00% of the reference's interior cells
+slope    xdemmp    mean |d| 6.312e-07, max 1.526e-05; aspect mean |d| 1.04e-05 (|d| > 90: 0.0%); no value on 0.00% of the reference's interior cells
+resample xdemmp    mean |d| 0, max 0; no value on 0.00% of the reference's interior cells
+relief   xdemmpw   |r| 0.9999; no value on 0.00% of the reference's interior cells
+resample xdemmpw   mean |d| 0, max 0; no value on 0.00% of the reference's interior cells
+focal    skimage   mean |d| 0.005027, max 421.7; no value on 0.00% of the reference's interior cells
+resample skimage   mean |d| 0.597, max 82.34; no value on 0.07% of the reference's interior cells
+slope    pcraster  mean |d| 2.474e-07, max 1.526e-05; aspect mean |d| 5.33e-06 (|d| > 90: 0.0%); no value on 0.00% of the reference's interior cells
+algebra  pcraster  mean |d| 3.77e-06, max 3.052e-05; no value on 0.00% of the reference's interior cells
+cost     pcraster  |r| 1.0000, median 10.0000 of ref; no value on 0.00% of the reference's interior cells
+slope    pcrastermc mean |d| 2.004e-07, max 1.526e-05; aspect mean |d| 5.33e-06 (|d| > 90: 0.0%); no value on 0.00% of the reference's interior cells
+algebra  pcrastermc mean |d| 3.77e-06, max 3.052e-05; no value on 0.00% of the reference's interior cells
+focal    otb       mean |d| 0.3795, max 94.35; no value on 0.00% of the reference's interior cells
+algebra  otb       mean |d| 0, max 0; no value on 0.00% of the reference's interior cells
+resample otb       mean |d| 0.06671, max 654.7; no value on 0.00% of the reference's interior cells
+cost     pyflwdir  |r| 1.0000, median 9.9963 of ref; no value on 0.00% of the reference's interior cells
+fa       pyflwdir  same count on 100.0%, max 81452052 vs 81452052 (pyflwdir), |r| of log 1.0000
+relief   geotools  |r| 1.0000; no value on 0.00% of the reference's interior cells
+focal    geotools  mean |d| 0.0002845, max 41.33; no value on 0.00% of the reference's interior cells
+algebra  geotools  mean |d| 0, max 0; no value on 0.00% of the reference's interior cells
+resample geotools  mean |d| 4.242e-05, max 7.67; no value on 0.00% of the reference's interior cells
+resample geotools_c2g mean |d| 4.242e-05, max 7.67; no value on 0.00% of the reference's interior cells
+relief   geotoolspar |r| 1.0000; no value on 0.00% of the reference's interior cells
+focal    geotoolspar mean |d| 0.0002845, max 41.33; no value on 0.00% of the reference's interior cells
+resample geotoolspar mean |d| 4.242e-05, max 7.67; no value on 0.00% of the reference's interior cells

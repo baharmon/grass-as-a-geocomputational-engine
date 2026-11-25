@@ -1,0 +1,56 @@
+== ice10, strips of 1024 rows, only algebra cost focal relief resample slope
+algebra (reference: float64 reference):
+  grass: max rel diff 9.0e-08, cells 1058956461, no value on land 0
+  gdal: max rel diff 5.9e-08, cells 1058956461, no value on land 0
+  terra: max rel diff 5.9e-08, cells 1058956461, no value on land 0
+  saga: max rel diff 5.9e-08, cells 1058956461, no value on land 0
+  wbw: max rel diff 5.9e-08, cells 1058956461, no value on land 0
+  xrs: max rel diff 2.2e-07, cells 1058956461, no value on land 0
+  xrsdask: max rel diff 2.2e-07, cells 1058956461, no value on land 0
+relief (reference: grass):
+  gdal: |r| 0.99461, cells 1058956461, no value on land 0
+  terra: |r| 0.99996, cells 1058956461, no value on land 0
+  saga: |r| 0.99273, cells 1058956461, no value on land 0
+  wbw: |r| 0.99381, cells 1058956461, no value on land 0
+  wbt: |r| 0.99381, cells 1058956461, no value on land 0
+  xrs: |r| 0.99460, cells 1058956461, no value on land 0
+  xrsdask: |r| 0.99460, cells 1058956461, no value on land 0
+  tt: |r| 0.99937, cells 1058956461, no value on land 0
+slope (reference: grass):
+  gdal: r 1.00000, mean |diff| 2.983e-07, cells 1058956461, no value on land 0
+  terra: r 1.00000, mean |diff| 1.927e-13, cells 1058956461, no value on land 0
+  saga: r 1.00000, mean |diff| 0, cells 1058956461, no value on land 0
+  wbw: r 0.99948, mean |diff| 0.167, cells 1058956461, no value on land 0
+  wbt: r 0.99948, mean |diff| 0.167, cells 1058956461, no value on land 0
+  xrs: r 1.00000, mean |diff| 6.254e-08, cells 1058956461, no value on land 0
+  xrsdask: r 1.00000, mean |diff| 6.254e-08, cells 1058956461, no value on land 0
+  tt: r 0.99994, mean |diff| 0.05094, cells 1058956461, no value on land 0
+  richdem: r 1.00000, mean |diff| 0, cells 1058956461, no value on land 0
+resample (reference: grass):
+  tt: grid (43328, 49368), DEM grid at row 1, column 0 of it
+  gdal: max |diff| 0, mean |diff| 0, >1 mm 0.000%, cells 1058620814, no value on land 0
+  terra: max |diff| 0, mean |diff| 0, >1 mm 0.000%, cells 1058620814, no value on land 0
+  saga: max |diff| 0, mean |diff| 0, >1 mm 0.000%, cells 1058620814, no value on land 0
+  wbw: max |diff| 142.1, mean |diff| 1.189, >1 mm 98.969%, cells 1058620814, no value on land 0
+  wbt: max |diff| 415.6, mean |diff| 2.459, >1 mm 99.066%, cells 1058620814, no value on land 0
+  xrs: max |diff| 0, mean |diff| 0, >1 mm 0.000%, cells 1058620814, no value on land 0
+  xrsdask: max |diff| 15.72, mean |diff| 0.0007012, >1 mm 0.377%, cells 1058620814, no value on land 0
+  tt: max |diff| 0, mean |diff| 0, >1 mm 0.000%, cells 1058620814, no value on land 0
+focal (reference: grass):
+  gdal: max |diff| 0, mean |diff| 0, >1 mm 0.000%, cells 1051584374, no value on land 0
+  terra: max |diff| 0, mean |diff| 0, >1 mm 0.000%, cells 1051584374, no value on land 0
+  saga: max |diff| 0, mean |diff| 0, >1 mm 0.000%, cells 1051584374, no value on land 0
+  wbw: max |diff| 24.66, mean |diff| 0.04252, >1 mm 72.791%, cells 1051584374, no value on land 0
+  wbt: max |diff| 24.66, mean |diff| 0.04252, >1 mm 72.791%, cells 1051584374, no value on land 0
+  xrs: max |diff| 0, mean |diff| 0, >1 mm 0.000%, cells 1051584374, no value on land 0
+  xrsdask: max |diff| 0, mean |diff| 0, >1 mm 0.000%, cells 1051584374, no value on land 0
+  tt: max |diff| 0, mean |diff| 0, >1 mm 0.000%, cells 1051584374, no value on land 0
+cost (reference: grass):
+  terra: r 1.00000, cells 1060015572, no value on land 0
+  wbw: r 1.00000, cells 1060015572, no value on land 0
+  wbt: r 1.00000, cells 1060015572, no value on land 0
+== ice10, strips of 1024 rows, only relief slope
+relief (reference: grass):
+  qgis: |r| 0.99460, cells 1058956461, no value on land 0
+slope (reference: grass):
+  qgis: r 1.00000, mean |diff| 2.501e-07, cells 1058956461, no value on land 0

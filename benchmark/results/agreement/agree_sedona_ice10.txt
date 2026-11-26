@@ -1,0 +1,3 @@
+out/ops/algebra_sedona_ice10m.tif vs out/ops/algebra_gdal_ice10m.tif: both 1060309263 only_sedona 0 only_ref 1078608705 max 0 p99.9 <= 0 mean 0
+out/ops/series_sun_sedona_ice10m.tif vs out/ops/series_sun_gdal_ice10m.tif: both 1059490388 only_sedona 0 only_ref 0 max 0 p99.9 <= 0 mean 0
+out/ops/resample_sedona_ice10m_h2.tif vs out/ops/resample_gdal_ice10m.tif: both 1060648758 only_sedona 0 only_ref 4 max 14.5273 p99.9 <= 0.00351 mean 0.000158

@@ -1,0 +1,9 @@
+series   grass     mean |d| 0, max 0; no value on 0.00% of the reference's interior cells
+series   terra     mean |d| 0, max 0; no value on 0.00% of the reference's interior cells
+series   saga      mean |d| 0, max 0; no value on 0.00% of the reference's interior cells
+series   wbw       mean |d| 6.103e-05, max 0.0001221; no value on 0.00% of the reference's interior cells
+series   wbt       mean |d| 0, max 0; no value on 0.00% of the reference's interior cells
+series   xrsdask   mean |d| 0.0001305, max 0.0007324; no value on 0.00% of the reference's interior cells
+series   qgis      mean |d| 0, max 0; no value on 0.00% of the reference's interior cells
+series   rt        mean |d| 0.0001305, max 0.0007324; no value on 0.00% of the reference's interior cells
+series   otb       mean |d| 0, max 0; no value on 0.00% of the reference's interior cells

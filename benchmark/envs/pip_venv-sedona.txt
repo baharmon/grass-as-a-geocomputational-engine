@@ -1,0 +1,15 @@
+affine==3.0.1
+apache-sedona==1.9.1
+attrs==26.1.0
+certifi==2026.10.23
+click==8.5.1
+numpy==2.5.4
+pandas==3.1.1
+py4j==0.10.9.9
+pyarrow==26.0.1
+pyparsing==3.3.3
+pyspark==4.1.4
+python-dateutil==4.0.0
+rasterio==1.5.2
+shapely==2.2.0
+tzdata==2026.6

@@ -1,0 +1,142 @@
+operation,package,run,tool_and_parameters,memory_setting,threads,flags
+flow accumulation,GRASS,grass_terraflow_sfd_m500,r.terraflow -s,memory=500,one thread (no setting),
+flow accumulation,GRASS,r.watershed_m2400_sfd_2560M,r.watershed -m -s (segmented),memory=2400,one thread (no setting),
+flow accumulation,GRASS,r.watershed_m2400_sfd_3G,r.watershed -m -s (segmented),memory=2400,one thread (no setting),
+flow accumulation,GRASS,r.watershed_m2400_sfd,r.watershed -m -s (segmented),memory=2400,one thread (no setting),
+flow accumulation,GRASS,r.watershed_sfd,r.watershed -s (in memory),,one thread (no setting),
+flow accumulation,TauDEM,traudem_np8,TauDEM PitRemove -> D8FlowDir -> AreaD8 without edge-contamination check (traudem),,8 MPI processes,
+flow accumulation,Whitebox Workflows,wbng_d8_natural_t8,"hydrology.depressions_storage.fill_depressions(fix_flats=True, flat_resolution=""natural"") -> flow_routing.d8_flow_accum(out_type=""cells"")",,RAYON_NUM_THREADS=8,
+flow accumulation,WhiteboxTools,wbt_d8_t8,FillDepressions --fix_flats -> D8FlowAccumulation --out_type=cells,,--max_procs=8,
+flow accumulation,RichDEM,richdem_d8_f64_t8,"DEM cast to Float64, FillDepressions + ResolveFlats -> FlowAccumulation(method=""D8"")",MemoryMax 100 GB,8 OpenMP threads,input doubled
+flow accumulation,SAGA,saga_ms0.01,"ta_preprocessor 5 (Fill Sinks XXL, Wang & Liu, MINSLOPE=0.01) -> ta_hydrology 0 (top-down, METHOD=0 D8, FLOW_UNIT=0 cells)",,saga_cmd --cores=8,
+flow accumulation,pysheds,pysheds_d8_f64_eps,"Float64, fill_pits -> fill_depressions -> resolve_flats(eps=1e-9) -> flowdir(routing=""d8"") -> accumulation",MemoryMax 100 GB,no setting (one thread),incomplete
+flow accumulation,pyflwdir,pyflwdir_d8,"pyflwdir.from_dem (priority-flood fill + D8) -> upstream_area(unit=""cell"")",,no setting (one thread),
+flow accumulation,terra,terra_d8,"terrain(v = ""flowdir"") -> flowAccumulation (no depression handling)",,"terraOptions(threads = 8, parallel = TRUE)",incomplete
+flow accumulation,TopoToolbox,topotoolbox_d8,FlowObject (fill + carving through flats) -> flow_accumulation,,OMP_NUM_THREADS=8 (operations run almost entirely on one thread),
+flow accumulation,xarray-spatial,xrs_d8,"Float64, fill -> flow_direction -> flow_accumulation (no flat resolution)",,NUMBA_NUM_THREADS=8,incomplete memguard
+flow accumulation,Landlab,fa_cand_landlab_d8,"FlowAccumulator(flow_director=""FlowDirectorD8"", depression_finder=""DepressionFinderAndRouter"")",,no setting (one thread),
+flow accumulation,PCRaster,fa_cand_pcraster_d8,"lddcreate removing every pit (outflow depth, core volume, core area and catchment precipitation 1e31) -> accuflux(..., 1)",,one thread,
+least-cost distance + path,GRASS,cost_grass_m300,r.cost (outdir) -> r.path format=auto raster_path,memory=300,one thread (no setting),
+least-cost distance + path,GRASS,cost_grass_m20000,r.cost (outdir) -> r.path format=auto raster_path,memory=20000,one thread (no setting),
+least-cost distance + path,terra,cost_terra,"costDist(friction, target = 0) with the start cell set to 0",,"terraOptions(threads = 8, parallel = TRUE)",no path
+least-cost distance + path,SAGA,cost_saga,"grid_analysis 0 (accumulated cost, DEST_TYPE=0 points) -> grid_analysis 5 (least-cost paths)",,saga_cmd --cores=8,
+least-cost distance + path,Whitebox Workflows,cost_wbw_sdat,"raster.distance_cost.cost_distance -> cost_pathway, written as SAGA grids (its GeoTIFF writer is classic TIFF, unreadable above 4 GiB)",,RAYON_NUM_THREADS=8,
+least-cost distance + path,WhiteboxTools,cost_wbt,"CostDistance (source raster, accumulation + backlink) -> CostPathway",,--max_procs=8,
+least-cost distance + path,xarray-spatial,cost_xrs,"cost_distance(src, friction, target_values=[1]) + a_star_search(snap_start, snap_goal) (NumPy)",,NUMBA_NUM_THREADS=8,memguard
+least-cost distance + path,raster_tools,cost_rt,distance.cda_cost_distance (cost distance + traceback),,"dask threaded scheduler, 8 workers",no path
+least-cost distance + path,scikit-image,cost_skimage,graph.MCP_Geometric(fully_connected=True): find_costs + traceback to the end cell,,no setting (one thread),
+least-cost distance + path,PCRaster,cost_pcraster,"spread(start, 0, friction)",,one thread,no path
+least-cost distance + path,gdistance,cost_gdistance,"transition(1 / mean, directions = 8) -> geoCorrection(type = ""c"") -> accCost + shortestPath",,no setting (one thread),
+least-cost distance + path,pyflwdir,cost_pyflwdir,"gis_utils.spread2d (8-neighbour Dijkstra, step length x friction)",,no setting (one thread),no path
+shaded relief,GRASS,relief_grass,"r.relief (defaults: altitude 30, azimuth 270)",,one thread (no setting),
+shaded relief,GDAL,relief_gdal,gdaldem hillshade -az 270 -alt 30 -compute_edges,,no setting (one thread); GDAL_NUM_THREADS=8 for compression,
+shaded relief,GDAL,relief_gdal_cache64,gdaldem hillshade -az 270 -alt 30 -compute_edges,GDAL_CACHEMAX=64,no setting (one thread); GDAL_NUM_THREADS=8 for compression,
+shaded relief,terra,relief_terra,"terrain(c(""slope"", ""aspect""), unit = ""radians"") -> shade(angle = 30, direction = 270)",,"terraOptions(threads = 8, parallel = TRUE)",
+shaded relief,terra,relief_terra_todisk,"terrain(c(""slope"", ""aspect""), unit = ""radians"") -> shade(angle = 30, direction = 270)","terraOptions(todisk = TRUE, memmax = 0.5)","terraOptions(threads = 8, parallel = TRUE)",
+shaded relief,SAGA,relief_saga,ta_lighting 0 AZIMUTH=270 DECLINATION=30,,saga_cmd --cores=8,
+shaded relief,Whitebox Workflows,relief_wbw,"terrain.general.hillshade(azimuth=270, altitude=30)",,RAYON_NUM_THREADS=8,
+shaded relief,WhiteboxTools,relief_wbt,Hillshade --azimuth=270 --altitude=30,,--max_procs=8,
+shaded relief,xarray-spatial,relief_xrs,"hillshade(azimuth=270, angle_altitude=30)",,NUMBA_NUM_THREADS=8,
+shaded relief,xarray-spatial dask,relief_xrsdask,"hillshade(azimuth=270, angle_altitude=30), chunks 1024",,"dask threaded scheduler, 8 workers",
+shaded relief,TopoToolbox,relief_tt,"GridObject.hillshade(azimuth=270, altitude=30)",,OMP_NUM_THREADS=8 (operations run almost entirely on one thread),
+shaded relief,QGIS,relief_qgis_v60,native:hillshade AZIMUTH=270 V_ANGLE=60 (acts as the angle from the zenith: 30 degrees altitude),,no setting (one thread); GDAL_NUM_THREADS=8 for compression,
+shaded relief,raster_tools,relief_rt,"surface.hillshade(azimuth=270, altitude=30)",,"dask threaded scheduler, 8 workers",
+shaded relief,xDEM,relief_xdem,"DEM.hillshade(surface_fit=""Horn"", azimuth=0, altitude=30) (xDEM's azimuth 0 gives the others' 270)",,one process,
+shaded relief,xDEM,relief_xdemmp,"DEM.hillshade(surface_fit=""Horn"", azimuth=0, altitude=30), out-of-memory mode (MultiprocConfig, chunk 4096)",,"out-of-memory mode, default cluster (one process)",
+shaded relief,xDEM,relief_xdemmpw,"DEM.hillshade(surface_fit=""Horn"", azimuth=0, altitude=30), out-of-memory mode (MultiprocConfig, chunk 4096)",,"out-of-memory mode, 8 worker processes",
+shaded relief,Landlab,relief_landlab,"calc_hillshade_at_node(alt=30, az=270)",,no setting (one thread),
+shaded relief,GeoTools,relief_geotools,"coverage operation ShadedRelief (jai-ext, altitude 30, azimuth 270, DEFAULT algorithm)",,JAI tile scheduler,
+shaded relief,GeoTools,relief_geotoolspar,"coverage operation ShadedRelief (jai-ext, altitude 30, azimuth 270, DEFAULT algorithm), our parallel tile computation",2 GB JAI tile cache,8 threads (our parallel tiles),user
+"resampling, bicubic",GRASS,resample_grass_m300_n8,r.resamp.interp method=bicubic,memory=300,nprocs=8,
+"resampling, bicubic",GRASS,resample_grass_m20000_n8,r.resamp.interp method=bicubic,memory=20000,nprocs=8,
+"resampling, bicubic",GDAL,resample_gdal,gdalwarp -r cubic -tr -te (target grid),,gdalwarp -multi -wo NUM_THREADS=8,
+"resampling, bicubic",GDAL,resample_gdal_cache64,gdalwarp -r cubic -tr -te (target grid),"GDAL_CACHEMAX=64, -wm 64",gdalwarp -multi -wo NUM_THREADS=8,
+"resampling, bicubic",terra,resample_terra,"resample(src, target, method = ""cubic"")",,"terraOptions(threads = 8, parallel = TRUE)",
+"resampling, bicubic",terra,resample_terra_todisk,"resample(src, target, method = ""cubic"")","terraOptions(todisk = TRUE, memmax = 0.5)","terraOptions(threads = 8, parallel = TRUE)",
+"resampling, bicubic",SAGA,resample_saga,"grid_tools 0 SCALE_DOWN=2 (bicubic), target grid by extent and cell size",,saga_cmd --cores=8,
+"resampling, bicubic",Whitebox Workflows,resample_wbw,"remote_sensing.resample(method=""cc"")",,RAYON_NUM_THREADS=8,
+"resampling, bicubic",WhiteboxTools,resample_wbt,Resample --method=cc --base,,--max_procs=8,
+"resampling, bicubic",xarray-spatial,resample_xrs,"rioxarray rio.reproject(..., resampling=cubic, num_threads=8)",,NUMBA_NUM_THREADS=8,
+"resampling, bicubic",xarray-spatial dask,resample_xrsdask,"odc-geo odc.reproject(GeoBox, resampling=""cubic"", chunks=(1024, 1024))",,"dask threaded scheduler, 8 workers",
+"resampling, bicubic",TopoToolbox,resample_tt,"GridObject.resample(10, cubic)",,OMP_NUM_THREADS=8 (operations run almost entirely on one thread),
+"resampling, bicubic",Sedona,sedona_resample,"RS_Resample(..., 'Bicubic') on GDAL tiles with a 2-cell overlap, GDAL mosaic",,"Spark local mode, 8 cores",user
+"resampling, bicubic",raster_tools,resample_rt,"warp.reproject(src, geobox, resample_method=""cubic"")",,"dask threaded scheduler, 8 workers",approximate
+"resampling, bicubic",xDEM,resample_xdem,"GeoUtils Raster.reproject(ref, resampling=""cubic"", n_threads=8)",,one process,
+"resampling, bicubic",xDEM,resample_xdemmp,"GeoUtils Raster.reproject(ref, resampling=""cubic"", n_threads=8), out-of-memory mode (MultiprocConfig, chunk 4096)",,"out-of-memory mode, default cluster (one process)",
+"resampling, bicubic",xDEM,resample_xdemmpw,"GeoUtils Raster.reproject(ref, resampling=""cubic"", n_threads=8), out-of-memory mode (MultiprocConfig, chunk 4096)",,"out-of-memory mode, 8 worker processes",
+"resampling, bicubic",scikit-image,resample_skimage,transform.warp(order=3) (cubic spline),,no setting (one thread),approximate
+"resampling, bicubic",Orfeo ToolBox,resample_otb,otbcli_Superimpose -interpolator bco (streaming),256 MB RAM hint,ITK_GLOBAL_DEFAULT_NUMBER_OF_THREADS=8,approximate
+"resampling, bicubic",GeoTools,resample_geotools,Operations.resample with JAI INTERP_BICUBIC,,JAI tile scheduler,approximate
+"resampling, bicubic",GeoTools,resample_geotools_c2g,Operations.resample with JAI INTERP_BICUBIC,2 GB JAI tile cache,JAI tile scheduler,approximate
+"resampling, bicubic",GeoTools,resample_geotoolspar,"Operations.resample with JAI INTERP_BICUBIC, our parallel tile computation",2 GB JAI tile cache,8 threads (our parallel tiles),user approximate
+slope + aspect,GRASS,slope_grass_n8,r.slope.aspect,,nprocs=8,
+slope + aspect,GDAL,slope_gdal,gdaldem slope -compute_edges + gdaldem aspect -compute_edges,,no setting (one thread); GDAL_NUM_THREADS=8 for compression,
+slope + aspect,GDAL,slope_gdal_cache64,gdaldem slope -compute_edges + gdaldem aspect -compute_edges,GDAL_CACHEMAX=64,no setting (one thread); GDAL_NUM_THREADS=8 for compression,
+slope + aspect,terra,slope_terra,"terrain(c(""slope"", ""aspect""), unit = ""degrees"", neighbors = 8)",,"terraOptions(threads = 8, parallel = TRUE)",
+slope + aspect,terra,slope_terra_todisk,"terrain(c(""slope"", ""aspect""), unit = ""degrees"", neighbors = 8)","terraOptions(todisk = TRUE, memmax = 0.5)","terraOptions(threads = 8, parallel = TRUE)",
+slope + aspect,SAGA,slope_saga,ta_morphometry 0 METHOD=2 UNIT_SLOPE=1,,saga_cmd --cores=8,
+slope + aspect,Whitebox Workflows,slope_wbw,"slope(units=""degrees"") + aspect",,RAYON_NUM_THREADS=8,
+slope + aspect,WhiteboxTools,slope_wbt,Slope --units=degrees + Aspect,,--max_procs=8,
+slope + aspect,xarray-spatial,slope_xrs,slope + aspect,,NUMBA_NUM_THREADS=8,
+slope + aspect,xarray-spatial dask,slope_xrsdask,"slope + aspect, chunks 1024",,"dask threaded scheduler, 8 workers",
+slope + aspect,TopoToolbox,slope_tt,evansslope + aspect,,OMP_NUM_THREADS=8 (operations run almost entirely on one thread),
+slope + aspect,RichDEM,slope_richdem,"TerrainAttribute(attrib=""slope_degrees"") + ""aspect""",,8 OpenMP threads,
+slope + aspect,QGIS,slope_qgis,native:slope + native:aspect,,no setting (one thread); GDAL_NUM_THREADS=8 for compression,
+slope + aspect,raster_tools,slope_rt,surface.slope(degrees=True) + surface.aspect,,"dask threaded scheduler, 8 workers",
+slope + aspect,xDEM,slope_xdem,"slope(surface_fit=""Horn"", degrees=True) + aspect(surface_fit=""Horn"")",,one process,
+slope + aspect,xDEM,slope_xdemmp,"slope(surface_fit=""Horn"", degrees=True) + aspect(surface_fit=""Horn""), out-of-memory mode (MultiprocConfig, chunk 4096)",,"out-of-memory mode, default cluster (one process)",
+slope + aspect,Landlab,slope_landlab,"calc_slope_at_node + calc_aspect_at_node(unit=""degrees"")",,no setting (one thread),
+slope + aspect,PCRaster,slope_pcraster,atan(slope(dem)) + aspect(dem),,one thread,
+slope + aspect,PCRaster,slope_pcrastermc,pcraster.multicore atan and slope + aspect(dem),,"pcraster.multicore, 8 worker threads",
+raster algebra,GRASS,algebra_grass_n8,r.mapcalc file=...,,nprocs=8,
+raster algebra,GDAL,algebra_gdal,gdal raster calc (muparser expression),,no setting (one thread); GDAL_NUM_THREADS=8 for compression,
+raster algebra,GDAL,algebra_gdal_cache64,gdal raster calc (muparser expression),GDAL_CACHEMAX=64,no setting (one thread); GDAL_NUM_THREADS=8 for compression,
+raster algebra,terra,algebra_terra,"app(r, fun = function(x) ...)",,"terraOptions(threads = 8, parallel = TRUE)",
+raster algebra,terra,algebra_terra_todisk,"app(r, fun = function(x) ...)","terraOptions(todisk = TRUE, memmax = 0.5)","terraOptions(threads = 8, parallel = TRUE)",
+raster algebra,SAGA,algebra_saga,grid_calculus 1 FORMULA,,saga_cmd --cores=8,
+raster algebra,Whitebox Workflows,algebra_wbw,raster.raster_calculator,,RAYON_NUM_THREADS=8,
+raster algebra,WhiteboxTools,algebra_wbt,"RasterCalculator (x^0.5, e()^x, (x^2)^0.5: no sqrt, exp or abs)",,--max_procs=8,
+raster algebra,xarray-spatial,algebra_xrs,NumPy expression on the DataArray,,NUMBA_NUM_THREADS=8,
+raster algebra,xarray-spatial dask,algebra_xrsdask,"NumPy expression on the DataArray (dask), chunks 1024",,"dask threaded scheduler, 8 workers",
+raster algebra,Sedona,sedona_algebra,"RS_MapAlgebra (Jiffle) on GDAL tiles, GDAL mosaic",,"Spark local mode, 8 cores",user
+raster algebra,raster_tools,algebra_rt,NumPy expression on the Raster (dask),,"dask threaded scheduler, 8 workers",
+raster algebra,xDEM,algebra_xdem,NumPy expression on the GeoUtils Raster,,one process,
+raster algebra,PCRaster,algebra_pcraster,"pcr.sqrt, pcr.exp, pcr.abs expression",,one thread,
+raster algebra,PCRaster,algebra_pcrastermc,"pcraster.multicore sqrt, abs and the operators, pcr.exp",,"pcraster.multicore, 8 worker threads",
+raster algebra,Orfeo ToolBox,algebra_otb,otbcli_BandMath -exp,,ITK_GLOBAL_DEFAULT_NUMBER_OF_THREADS=8,
+raster algebra,GeoTools,algebra_geotools,Jiffle script,,JAI tile scheduler,
+"series mean, 12 layers",GRASS,series_sun_grass_fcell,r.series method=average over FCELL maps,,nprocs=8,
+"series mean, 12 layers",GDAL,series_sun_gdal,gdal raster calc (S1 + ... + S12) / 12,,no setting (one thread); GDAL_NUM_THREADS=8 for compression,
+"series mean, 12 layers",GDAL,series_sun_gdal_cache64,gdal raster calc (S1 + ... + S12) / 12,GDAL_CACHEMAX=64,no setting (one thread); GDAL_NUM_THREADS=8 for compression,
+"series mean, 12 layers",terra,series_sun_terra,mean(rast(files)),,"terraOptions(threads = 8, parallel = TRUE)",
+"series mean, 12 layers",terra,series_sun_terra_todisk,mean(rast(files)),"terraOptions(todisk = TRUE, memmax = 0.5)","terraOptions(threads = 8, parallel = TRUE)",
+"series mean, 12 layers",SAGA,series_sun_saga,statistics_grid 4 MEAN,,saga_cmd --cores=8,
+"series mean, 12 layers",Whitebox Workflows,series_sun_wbw_bigtiff_b,"raster.average_overlay, written as BigTIFF (its default classic TIFF is unreadable above 4 GiB)",,RAYON_NUM_THREADS=8,
+"series mean, 12 layers",WhiteboxTools,series_sun_wbt,AverageOverlay,,--max_procs=8,
+"series mean, 12 layers",xarray-spatial,series_sun_xrs,"xr.concat(layers, ""t"").mean(""t"")",,NUMBA_NUM_THREADS=8,
+"series mean, 12 layers",xarray-spatial dask,series_sun_xrsdask,"xr.concat(layers, ""t"").mean(""t""), chunks 1024",,"dask threaded scheduler, 8 workers",
+"series mean, 12 layers",QGIS,series_sun_qgis,native:cellstatistics STATISTIC=2 (mean),,no setting (one thread); GDAL_NUM_THREADS=8 for compression,
+"series mean, 12 layers",Sedona,sedona_series,"RS_Union stack + Jiffle, GDAL tiles and mosaic",,"Spark local mode, 8 cores",user
+"series mean, 12 layers",raster_tools,series_sun_rt,"general.local_stats(band_concat(files), ""mean"")",,"dask threaded scheduler, 8 workers",
+"series mean, 12 layers",xDEM,series_sun_xdem,sum of GeoUtils Rasters / 12,,one process,
+"series mean, 12 layers",PCRaster,series_sun_pcraster,sum of maps / 12,,one thread,
+"series mean, 12 layers",Orfeo ToolBox,series_sun_otb,"otbcli_BandMath -exp ""(im1b1+...+im12b1)/12""",,ITK_GLOBAL_DEFAULT_NUMBER_OF_THREADS=8,
+"series mean, 12 layers",GeoTools,series_sun_geotools,Jiffle script,,JAI tile scheduler,
+focal median 25 × 25,GRASS,focal_grass_n8,r.neighbors size=25 method=median,,nprocs=8,
+focal median 25 × 25,GDAL,focal_gdal,gdal raster neighbors --method median --kernel equal --size 25,,no setting (one thread); GDAL_NUM_THREADS=8 for compression,
+focal median 25 × 25,GDAL,focal_gdal_cache64,gdal raster neighbors --method median --kernel equal --size 25,GDAL_CACHEMAX=64,no setting (one thread); GDAL_NUM_THREADS=8 for compression,
+focal median 25 × 25,terra,focal_terra,"focal(w = 25, fun = ""median"", na.rm = TRUE); the unlimited run of 2026-11-02 used na.rm = FALSE (same values on land; no value where the window touches no-data)",,"terraOptions(threads = 8, parallel = TRUE)",
+focal median 25 × 25,terra,focal_terra_todisk,"focal(w = 25, fun = ""median"")","terraOptions(todisk = TRUE, memmax = 0.5)","terraOptions(threads = 8, parallel = TRUE)",
+focal median 25 × 25,terra,focal_terra_narm,"focal(w = 25, fun = ""median"", na.rm = TRUE)",,"terraOptions(threads = 8, parallel = TRUE)",
+focal median 25 × 25,SAGA,focal_saga,"statistics_grid 1 MEDIAN, square kernel, radius 12",,saga_cmd --cores=8,
+focal median 25 × 25,Whitebox Workflows,focal_wbw,"remote_sensing.filters.median_filter(25, 25, sig_digits=4) (histogram median)",,RAYON_NUM_THREADS=8,approximate
+focal median 25 × 25,WhiteboxTools,focal_wbt,MedianFilter --filterx=25 --filtery=25 --sig_digits=4 (histogram median),,--max_procs=8,approximate
+focal median 25 × 25,xarray-spatial,focal_xrs,focal.apply with a numba nanmedian kernel (no median in focal_stats),,NUMBA_NUM_THREADS=8,user
+focal median 25 × 25,xarray-spatial dask,focal_xrsdask,"focal.apply with a numba nanmedian kernel (no median in focal_stats), chunks 1024",,"dask threaded scheduler, 8 workers",user
+focal median 25 × 25,TopoToolbox,focal_tt,"GridObject.filter(method=""median"", kernelsize=25)",,OMP_NUM_THREADS=8 (operations run almost entirely on one thread),
+focal median 25 × 25,raster_tools,focal_rt,"focal.focal(r, ""median"", 25, 25, ignore_null=True)",,"dask threaded scheduler, 8 workers",
+focal median 25 × 25,xDEM,focal_xdem,"DEM.filter(""median"", size=25)",,one process,
+focal median 25 × 25,scikit-image,focal_skimage,"filters.median(footprint 25 x 25, behavior=""ndimage"") (no no-data handling)",,no setting (one thread),approximate
+focal median 25 × 25,GeoTools,focal_geotools,coverage operation MedianFilter (25 x 25),,JAI tile scheduler,approximate
+focal median 25 × 25,Orfeo ToolBox,focal_otb,"otbcli_BandMathX -exp ""median(im1b1N21x21)"" (21 x 21, BandMathX's largest window)",,ITK_GLOBAL_DEFAULT_NUMBER_OF_THREADS=8,approximate
+focal median 25 × 25,GeoTools,focal_geotoolspar,"coverage operation MedianFilter (25 x 25), our parallel tile computation",2 GB JAI tile cache,8 threads (our parallel tiles),user approximate

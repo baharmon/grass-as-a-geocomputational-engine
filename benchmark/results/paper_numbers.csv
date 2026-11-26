@@ -1,0 +1,67 @@
+key,value,how
+dem_cells,2138917968,"49,368 x 43,326"
+dem_in_memory_GB,8.56,"cells x 4 bytes (Float32), 10^9 bytes"
+dem_in_memory_GiB,7.968,"cells x 4 bytes, 2^30 bytes: the unit of the memory ratios"
+other_packages,21,"with a point or a run that did not finish (xarray-spatial on NumPy and on dask counted once): GDAL, gdistance, GeoTools, Landlab, Orfeo ToolBox, PCRaster, pyflwdir, pysheds, QGIS, raster_tools, RichDEM, SAGA, scikit-image, Sedona, TauDEM, terra, TopoToolbox, Whitebox Workflows, WhiteboxTools, xarray-spatial, xDEM"
+flow accumulation | GRASS fastest | time / median,1.388,r.watershed -s
+least-cost distance + path | GRASS fastest | time / median,1.152,memory=300
+shaded relief | GRASS fastest | time / median,1.822,r.relief
+"resampling, bicubic | GRASS fastest | time / median",0.927,memory=300
+slope + aspect | GRASS fastest | time / median,0.72,r.slope.aspect
+raster algebra | GRASS fastest | time / median,0.84,r.mapcalc
+"series mean, 12 layers | GRASS fastest | time / median",0.527,r.series
+focal median 25 × 25 | GRASS fastest | time / median,0.71,r.neighbors
+GRASS fastest | time / median | range,0.53-1.82,over the 8 operations
+flow accumulation | GRASS main point | memory / DEM,5.092,r.watershed -s
+least-cost distance + path | GRASS main point | memory / DEM,0.073,memory=300
+shaded relief | GRASS main point | memory / DEM,0.005,r.relief
+"resampling, bicubic | GRASS main point | memory / DEM",0.034,memory=300
+slope + aspect | GRASS main point | memory / DEM,0.075,r.slope.aspect
+raster algebra | GRASS main point | memory / DEM,0.04,r.mapcalc
+"series mean, 12 layers | GRASS main point | memory / DEM",0.054,r.series
+focal median 25 × 25 | GRASS main point | memory / DEM,0.041,r.neighbors
+GRASS main point | memory / DEM | largest outside flow accumulation,0.075,below 0.1: less than a tenth
+flow accumulation | other packages | median memory / DEM,6.95,7 main points
+flow accumulation | other packages | main points at or above the DEM size,7 of 7,
+least-cost distance + path | other packages | median memory / DEM,5.16,6 main points
+least-cost distance + path | other packages | main points at or above the DEM size,6 of 6,
+shaded relief | other packages | median memory / DEM,2.17,12 main points
+shaded relief | other packages | main points at or above the DEM size,9 of 12,
+"resampling, bicubic | other packages | median memory / DEM",1.62,14 main points
+"resampling, bicubic | other packages | main points at or above the DEM size",10 of 14,
+slope + aspect | other packages | median memory / DEM,3.38,13 main points
+slope + aspect | other packages | main points at or above the DEM size,9 of 13,
+raster algebra | other packages | median memory / DEM,2.12,12 main points
+raster algebra | other packages | main points at or above the DEM size,8 of 12,
+"series mean, 12 layers | other packages | median memory / DEM",1.63,10 main points
+"series mean, 12 layers | other packages | main points at or above the DEM size",6 of 10,
+focal median 25 × 25 | other packages | median memory / DEM,2.74,12 main points
+focal median 25 × 25 | other packages | main points at or above the DEM size,8 of 12,
+other packages | median memory / DEM | range,1.62-6.95,over the 8 operations
+other packages | main points at or above the DEM size,63 of 86,all operations
+flow accumulation | GRASS r.watershed -s | time / median,1.388,
+flow accumulation | GRASS r.watershed -s | memory / DEM,5.092,
+flow accumulation | GRASS r.watershed -m memory=2400 | time / median,2.08,
+flow accumulation | GRASS r.watershed -m memory=2400 | memory / DEM,0.267,
+flow accumulation | GRASS r.terraflow memory=500 | time / median,4.562,
+flow accumulation | GRASS r.terraflow memory=500 | memory / DEM,0.072,
+flow accumulation | GRASS within 1 GB,1 GiB limit,"grass_terraflow_sfd_m500, 8405 s"
+least-cost distance + path | GRASS within 1 GB,1 GiB limit,"cost_grass_m300, 2476 s"
+shaded relief | GRASS within 1 GB,1 GiB limit,"relief_grass, 184 s"
+"resampling, bicubic | GRASS within 1 GB",1 GiB limit,"resample_grass_m300_n8, 135 s"
+slope + aspect | GRASS within 1 GB,1 GiB limit,"slope_grass_n8, 143 s"
+raster algebra | GRASS within 1 GB,1 GiB limit,"algebra_grass_n8, 187 s"
+"series mean, 12 layers | GRASS within 1 GB","no limit, peak 0.43 GiB",series_sun_grass_fcell
+focal median 25 × 25 | GRASS within 1 GB,1 GiB limit,"focal_grass_n8, 4778 s"
+"flow accumulation | time limit, h",5.1,8.4 x GRASS's fastest (2207 s)
+"least-cost distance + path | time limit, h",5.0,9.9 x GRASS's fastest (1824 s)
+"shaded relief | time limit, h",1.0,19.6 x GRASS's fastest (184 s)
+"resampling, bicubic | time limit, h",1.0,26.7 x GRASS's fastest (135 s)
+"slope + aspect | time limit, h",1.0,25.6 x GRASS's fastest (141 s)
+"raster algebra | time limit, h",1.0,19.3 x GRASS's fastest (187 s)
+"series mean, 12 layers | time limit, h",1.0,20.2 x GRASS's fastest (178 s)
+"focal median 25 × 25 | time limit, h",5.7,4.3 x GRASS's fastest (4778 s)
+"did not finish | memory limits, GiB","100, 110, 125","11 runs (MemoryMax, the machine's RAM without one, or the package's own memory check); 6 runs at the time limit"
+short operations | fewest runs without a memory limit per package,2,over the 66 points of the short operations
+long operations | repeated runs,8,"cost_grass_m300, focal_gdal, focal_grass_n8, grass_terraflow_sfd_m500, pyflwdir_d8, r.watershed_m2400_sfd, r.watershed_sfd, wbt_d8_t8"
+"long operations | repeated runs | largest difference, %",2.5,(slowest - fastest) / median

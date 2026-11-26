@@ -7,11 +7,12 @@ This repository contains supplemental material for the paper GRASS as a Geocompu
 ## Notebooks
 
 | Case Study                | Notebook                        | Dataset                                 |
-|---------------------------|---------------------------------|-----------------------------------------|
+| ------------------------- | ------------------------------- | --------------------------------------- |
 | Basic usage               | basics.ipynb                    |                                         |
 | Lidar segmentation        | lidar.ipynb                     | https://doi.org/10.5281/zenodo.24535069 |
-| Exploratory data analysis | exploratory-data-analysis.ipynb | https://zenodo.org/records/23600244     |
-| Stream bank extraction    | stream-bank-extraction.ipynb    | https://doi.org/10.5281/zenodo.24457872 |
+| Species diversity         | diversity.ipynb                 | https://doi.org/10.17605/OSF.IO/UC6DA   |
+| Exploratory data analysis | exploratory-data-analysis.ipynb | https://doi.org/10.5281/zenodo.24457872 |
+| Stream bank extraction    | stream-bank-extraction.ipynb    | https://doi.org/10.5281/zenodo.23600244 |
 
 ## Usage
 

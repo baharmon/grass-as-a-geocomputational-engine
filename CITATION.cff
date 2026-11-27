@@ -1,0 +1,34 @@
+cff-version: 1.2.0
+title: GRASS as a Geocomputational Engine
+message: >-
+  If you use this dataset, please cite it.
+type: dataset
+authors:
+  - given-names: Brendan
+    family-names: Harmon
+    email: brendan.harmon@gmail.com
+    affiliation: Louisiana State University
+    orcid: 'https://orcid.org/0000-0002-6218-9318'
+  - given-names: Vaclav
+    family-names: Petras
+    email: vpetras@ncsu.edu
+    affiliation: North Carolina State University
+    orcid: 'https://orcid.org/0000-0001-5566-9236'
+  - given-names: Anna
+    family-names: Petrasova
+    email: akratoc@ncsu.edu
+    affiliation: North Carolina State University
+    orcid: 'https://orcid.org/0000-0002-5120-5538'
+  - given-names: Paulo
+    family-names: van Breugel
+    email: paulo@ecodiv.earth
+    affiliation: HAS University of Applied Sciences
+    orcid: 'https://orcid.org/0000-0001-9579-0831'
+identifiers:
+  - type: doi
+    value: 10.5281/zenodo.24573755
+abstract: >-
+  Supplemental material for the paper GRASS as a Geocomputational Engine.
+license: GPL-3.0-or-later
+version: 1.0.0
+date-released: '2026-11-26'

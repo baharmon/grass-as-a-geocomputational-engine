@@ -1,6 +1,7 @@
 # GRASS as a Geocomputational Engine
 
 ![GitHub License](https://img.shields.io/github/license/baharmon/grass-as-a-geocomputational-engine)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.24573755.svg)](https://doi.org/10.5281/zenodo.24573755)
 
 This repository contains supplemental material for the paper GRASS as a Geocomputational Engine. 
 

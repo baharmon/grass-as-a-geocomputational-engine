@@ -4,6 +4,10 @@
 
 This repository contains supplemental material for the paper GRASS as a Geocomputational Engine. 
 
+## Benchmark
+
+The `benchmark` directory contains scripts for reproducing the benchmark in the paper.
+
 ## Notebooks
 
 | Case Study                | Notebook                        | Dataset                                 |
